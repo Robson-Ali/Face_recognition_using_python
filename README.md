@@ -72,15 +72,15 @@ Face Recognition is a very popular topic. It has lot of use cases in the filed o
 To learn more about the tasks which are being performed on the backend head over to link : Step by Step Face Recognition Code Implementation From Scratch In Python
 
 # Using The Package
-    # Train Model
-        import FaceReco.FaceReco as fr
-        fr_object1 =  fr.FaceReco()
-        fr_object1.train_model("lfw_selected/face")
-    # Test Model
+# Train Model
+    import FaceReco.FaceReco as fr
+    fr_object1 =  fr.FaceReco()
+    fr_object1.train_model("lfw_selected/face")
+# Test Model
     fr_object1.test_model("lfw_selected/face2/Johnny_Depp_0002.jpg")
-    # Load Saved Model
-        fr_object2 =  fr.FaceReco()
-        fr_object2.load_model("Model_Object_1") #folder of saved model
-        fr_object2.test_model("lfw_selected/face2/Johnny_Depp_0002.jpg")
+# Load Saved Model
+    fr_object2 =  fr.FaceReco()
+    fr_object2.load_model("Model_Object_1") #folder of saved model
+    fr_object2.test_model("lfw_selected/face2/Johnny_Depp_0002.jpg")
 # Contributing
 I am the only contributor to this project. But references were made from different projects.
