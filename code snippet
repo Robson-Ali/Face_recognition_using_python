@@ -1,0 +1,115 @@
+# Face detection and recognition
+
+!cp drive/MyDrive/Colab/lfw_selected.zip .
+!unzip lfw_selected.zip
+
+
+
+!cp drive/MyDrive/Colab/facesupportingfiles.zip .
+!unzip facesupportingfiles.zip
+
+import dlib, cv2, pickle,os
+import matplotlib.pyplot as plt
+import numpy as np
+from imutils.face_utils import FaceAligner
+# import imutilsls
+
+pose_predictor = dlib.shape_predictor('face supporting files/shape_predictor_68_face_landmarks.dat')
+fa = FaceAligner(pose_predictor)
+face_encoder = dlib.face_recognition_model_v1('face supporting files/dlib_face_recognition_resnet_model_v1.dat')
+detector = dlib.get_frontal_face_detector()
+modelFile = "face supporting files/opencv_face_detector_uint8.pb"
+configFile = "face supporting files/opencv_face_detector.pbtxt"
+net = cv2.dnn.readNetFromTensorflow(modelFile, configFile)
+
+faces=[]
+name=[]
+
+trainpath = "lfw_selected/face"
+
+for im in os.listdir(trainpath):
+    print(im)
+    img = cv2.imread(os.path.join(trainpath,im))
+#     plt.imshow(img)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    frameHeight = img.shape[0]
+    frameWidth = img.shape[1]
+    blob = cv2.dnn.blobFromImage(img, 1.0, (300, 300), [104, 117, 123], False, False)
+    net.setInput(blob)
+    detections = net.forward()
+    for i in range(detections.shape[2]):
+        confidence = detections[0, 0, i, 2]
+        if confidence > 0.7:
+            x1 = int(detections[0, 0, i, 3] * frameWidth)
+            y1 = int(detections[0, 0, i, 4] * frameHeight)
+            x2 = int(detections[0, 0, i, 5] * frameWidth)
+            y2 = int(detections[0, 0, i, 6] * frameHeight)
+            faceAligned = fa.align(img, gray,dlib.rectangle(x1,y1,x2,y2))
+            landmark = pose_predictor(faceAligned,dlib.rectangle(0,0,faceAligned.shape[0],faceAligned.shape[1]))
+            face_descriptor = face_encoder.compute_face_descriptor(faceAligned, landmark, num_jitters=2)
+            faces.append(face_descriptor)
+            name.append(im)
+            # print(face_descriptor," ",name)
+
+faces = np.array(faces)
+name = np.array(name)
+
+np.save('face_repr.npy', faces)
+np.save('labels.npy', name)
+
+faces1 = np.load("face_repr.npy")
+name1 = np.load("labels.npy")
+
+print(faces.shape)
+print(faces1.shape)
+
+image = cv2.imread("lfw_selected/face2/Johnny_Depp_0002.jpg")
+gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+plt.imshow(image)
+
+frameHeight = image.shape[0]
+frameWidth = image.shape[1]
+blob = cv2.dnn.blobFromImage(image, 1.0, (300, 300), [104, 117, 123], False, False)
+net.setInput(blob)
+detections = net.forward()
+
+scores=[]
+for i in range(detections.shape[2]):
+    confidence = detections[0, 0, i, 2]
+    if confidence > 0.7:
+        x1 = int(detections[0, 0, i, 3] * frameWidth)
+        y1 = int(detections[0, 0, i, 4] * frameHeight)
+        x2 = int(detections[0, 0, i, 5] * frameWidth)
+        y2 = int(detections[0, 0, i, 6] * frameHeight)
+        faceAligned = fa.align(image, gray,dlib.rectangle(x1,y1,x2,y2))
+        plt.imshow(faceAligned)
+        landmark = pose_predictor(faceAligned,dlib.rectangle(0,0,faceAligned.shape[0],faceAligned.shape[1]))
+        face_descriptor = face_encoder.compute_face_descriptor(faceAligned, landmark, num_jitters=2)
+        score = np.linalg.norm(faces - np.array(face_descriptor), axis=1)
+        scores.append(score)
+        imatches = np.argsort(score)
+        score = score[imatches]
+        print(name[imatches][:10].tolist(), score[:10].tolist())
+
+print(name[imatches][:10]) 
+print(score[:10])
+
+plt.imshow(cv2.imread("lfw_selected/face/Johnny_Depp_0001.jpg"))
+
+!pip install FaceReco
+
+import FaceReco.FaceReco as fr
+
+fr_object1 =  fr.FaceReco()
+
+fr_object1.train_model("lfw_selected/face")
+
+fr_object1.test_model("lfw_selected/face2/Johnny_Depp_0002.jpg")
+
+fr_object2 =  fr.FaceReco()
+
+fr_object2.load_model("Model_Object_1")
+
+fr_object2.test_model("lfw_selected/face2/Johnny_Depp_0002.jpg")
+
+!ls Model_Object_1
