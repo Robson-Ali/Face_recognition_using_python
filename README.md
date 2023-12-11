@@ -23,25 +23,27 @@ sample_image = cv2.imread('sample_image.jpg') sample_gray = cv2.cvtColor(sample_
 # Initialize the video capture
     video_capture = cv2.VideoCapture(0)
 
-while True: # Read a frame from the video stream ret, frame = video_capture.read()
+    while True: 
+    # Read a frame from the video stream 
+        ret, frame = video_capture.read()
 
-# Convert the frame to grayscale
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # Convert the frame to grayscale
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-# Detect faces in the frame
-    faces = face_detector(gray)
+    # Detect faces in the frame
+        faces = face_detector(gray)
 
-# Iterate over the detected faces
-for face in faces:
+    # Iterate over the detected faces
+        for face in faces:
     # Determine the facial landmarks
-    landmarks = landmark_predictor(gray, face)
+        landmarks = landmark_predictor(gray, face)
 
     # Extract the face features
-    features = face_recognizer.compute_face_descriptor(gray, landmarks)
+        features = face_recognizer.compute_face_descriptor(gray, landmarks)
 
     # Compare the features with the sample image features
-    distances = np.linalg.norm(np.array(sample_features) - np.array(features), axis=1)
-    min_distance = np.min(distances)
+        distances = np.linalg.norm(np.array(sample_features) - np.array(features), axis=1)
+        min_distance = np.min(distances)
 
     # Set a threshold to determine if the face belongs to the known person or is an unknown face
     if min_distance < 0.6:
