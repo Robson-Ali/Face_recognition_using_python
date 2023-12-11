@@ -14,12 +14,12 @@ test_requirements = [
 setuptools.setup(
     name="FaceReco",
     version="0.1.0",
-    author="Chidera2468",
-    author_email="chidera2468@gmail.com",
+    author="Robson-Ali",
+    author_email="aliye.r@yahoo.com",
     description="Face Recognition package in python",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Chidera2468/Face_recognition_using_python/new/main",
+    url="https://github.com/Robson-Ali/Face_recognition_using_python/new/main",
     packages=setuptools.find_packages(),
     package_data={
         'FaceReco': ['*']
