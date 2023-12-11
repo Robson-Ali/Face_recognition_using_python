@@ -18,7 +18,11 @@ This project helps its users to build face detection and recognition tool using 
     face_recognizer = dlib.face_recognition_model_v1('dlib_face_recognition_resnet_model_v1.dat')
 
 # Load a sample image and extract its features
-sample_image = cv2.imread('sample_image.jpg') sample_gray = cv2.cvtColor(sample_image, cv2.COLOR_BGR2GRAY) sample_faces = face_detector(sample_gray) sample_landmarks = [landmark_predictor(sample_gray, face) for face in sample_faces] sample_features = [face_recognizer.compute_face_descriptor(sample_gray, landmark) for landmark in sample_landmarks]
+sample_image = cv2.imread('sample_image.jpg') 
+sample_gray = cv2.cvtColor(sample_image, cv2.COLOR_BGR2GRAY) 
+sample_faces = face_detector(sample_gray) 
+sample_landmarks = [landmark_predictor(sample_gray, face) for face in sample_faces] 
+sample_features = [face_recognizer.compute_face_descriptor(sample_gray, landmark) for landmark in sample_landmarks]
 
 # Initialize the video capture
     video_capture = cv2.VideoCapture(0)
